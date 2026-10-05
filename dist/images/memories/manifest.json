@@ -1,0 +1,42 @@
+[
+  {
+    "asset": "table",
+    "original": "Bàn tiệc tình yêu đỏ sang trọng.png",
+    "webp": "table.webp",
+    "dimensions": [
+      1122,
+      1402
+    ],
+    "bytes": 387316
+  },
+  {
+    "asset": "frame",
+    "original": "Ảnh ChatGPT 09_04_33 5 thg 10, 2026-2.png",
+    "webp": "frame.webp",
+    "dimensions": [
+      1122,
+      1402
+    ],
+    "bytes": 196376
+  },
+  {
+    "asset": "album-au",
+    "original": "Bìa album cưới Anh & Uyên.png",
+    "webp": "album-au.webp",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "bytes": 152240
+  },
+  {
+    "asset": "money-box-au",
+    "original": "Hộp đựng thiệp cưới nhung đỏ monogram AU.png",
+    "webp": "money-box-au.webp",
+    "dimensions": [
+      1122,
+      1402
+    ],
+    "bytes": 201408
+  }
+]
