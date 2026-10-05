@@ -5,7 +5,7 @@ window.WEDDING_MEMORIES_DATA = {
     "names": "Đức Anh & Nhật Uyên",
     "initials": "A&U",
     "dateLabel": "25.10.2026",
-    "tableAsset": "images/memories/table.webp",
+    "tableAsset": "images/memories/table-complete.webp",
     "albumCover": "images/memories/album-au.webp",
     "boxAsset": "images/memories/money-box-au.webp",
     "frameAsset": "images/memories/frame.webp"

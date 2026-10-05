@@ -308,7 +308,7 @@
       message.rows = 6;
       message.maxLength = 1000;
       message.required = true;
-      message.placeholder = 'Viết vài lời dành cho Anh & Uyên...';
+      message.placeholder = site.key === 'bride' ? 'Viết vài lời dành cho Uyên & Anh...' : 'Viết vài lời dành cho Anh & Uyên...';
       messageLabel.htmlFor = message.id;
       const anonLabel = make('label', 'mem-wish-anonymous');
       const anonymous = make('input');

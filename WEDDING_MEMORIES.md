@@ -1,126 +1,115 @@
-# Wedding Memories — Đức Anh & Nhật Uyên
+# Wedding Memories — physical memory table
 
-The existing GSAP / ScrollTrigger invitation and album engine remain in place.
-The groom's site uses its original 5 frame images, 30 album images, AU artwork,
-date, and venue. The complete-table intro is shared with the bride-side site;
-each edition retains its own photos, identity and interaction flow.
+Both editions use the same scene, camera, physical wish card and closed-box
+slot interaction. Site identity and all 5 frame / 30 album photographs remain
+in each edition's existing `dist/memories-data.js`. Dates, venue, hero, Journey,
+countdown and the established album page engine are not changed by this revision.
 
-## Scene and camera
+## Complete base photograph
 
-`dist/memories.js` builds a 1440 × 1000 world inside `.wedding-camera` /
-`.wedding-scene`. The shallow tabletop spans x=240…1200, y=460…585.
-Three small rear frames stand at y=495; two front frames overlap at y≈536.
-Together they occupy the left 42% of the surface. The closed album sits near
-center with a slight −4° rotation and perspective. The closed money box rests
-on the right; the paper card has its own footprint next to it. Contact shadows,
-flower crops, and pearl strands connect objects to the support plane.
+The owner supplied `Ảnh ChatGPT 13_28_24 5 thg 10, 2026.zip`.
+Its PNG is 1448 × 1086, containing the entire red velvet table, warm hall,
+flowers, candles and pearls with no interactive objects baked into the photo.
+`dist/images/memories/table-complete.webp` retains that full image, dimensions
+and colors, at WebP quality 92 (about 338 KiB). No generated replacement,
+cut-up table layers, duplicated floral images or synthetic pearl paths remain.
+The old `table.webp` has been removed. Asset metadata is in `manifest.json`.
 
-`getFocusTransform()` converts measured client bounds back to world coordinates.
-The camera pans/scales the entire scene. Geometry is evaluated again on
-ScrollTrigger refresh; artwork is decoded before the initial refresh.
+## Image coordinates and grounding
 
-## Named phases
+`dist/memories-layout.js` is the shared source of staging coordinates:
+
+- World: the exact 1448 × 1086 photograph. Base and object plane have identical
+  bounds; object styles are percentages of those bounds.
+- Usable tabletop: x82–1370, y480–540. `point(u,v)` and `standing(...)` derive
+  object positions from horizontal position and depth, with a real foot anchor.
+- Rear row: photos 02, 03, 05. Front row: 01, 04. Original data order stays intact.
+  Their natural, lightly overlapping cluster occupies about 34% of usable width;
+  rotations are under one degree, with bottom-center origins.
+- Closed album: front-center, about 20% of usable width, slight −0.6° rotation.
+  The mount is a full two-page spread: the closed cover occupies half its width.
+  A 78° local tilt projects the top-down page onto the shallow photographed plane.
+  The unchanged album engine brings it forward and opens its pages for reading.
+- Money box: right side, about 12.4% of usable width, bottom on the tabletop.
+  The existing box artwork's transparent bounds are normalized in CSS; the slot
+  anchor matches those corrected artwork bounds.
+- Paper card: a 96px footprint between album and box, flat with a 2° rotation.
+  It is the same DOM paper that later lifts, becomes the form and enters the slot.
+- Shadows are specific to standing frames, a flat album and the box, close to
+  their contact planes. Warm artwork filters are subtle; frame photographs are
+  not recolored. Four tiny CSS petals overlap selected feet/edges. There is no
+  foreground floral reconstruction.
+
+`.mem-table` displays one full image. `.mem-object-layer` is an independent
+flat painting plane over it, preventing the tilted book from intersecting the
+background photograph. The book retains its own local 3D page-flip context.
+Stacking: rear frames 20, front24, album26, box28, small petals30, focused60.
+The projected wish paper uses its own screen layer for stable form interaction.
+
+## Scene and scroll flow
+
+The complete table **and every resting object are visible from the first state**.
+Intro only settles the world camera from 0.98 to1; nothing is assembled in layers,
+and frames/album/box never rise from their physical resting positions.
 
 `intro` → `photo-0…4` → `album-focus` → `album-open` → `spread-*` →
 `album-close` → `box-focus` → `card-lift` → `wishes` → `card-insert` →
 `card-inserted` → `exit`.
 
-The album retains its cover, page system, 10 desktop / 15 mobile spreads and
-fullscreen image viewer. Caption and accessibility state follow the active phase.
-Mobile shortens travel and reading distances; tablet shortens the pinned scene.
-Reduced motion exposes all 35 images and the form without pinning. The no-JS
-fallback exposes all 35 captioned images as links to their full-size files.
+`getFocusTransform()` measures actual client bounds and converts back to world
+coordinates. The camera pans/scales the whole world. Overview fits all sides,
+cloth and floor flowers without cropping. Width is capped at1250px; narrow or
+short screens scale the same composition instead of repositioning objects.
+Art is decoded before the first geometry refresh; resize recalculates camera
+and slot coordinates. Journey and Memories keep independent, sequential pins.
 
-## The physical wish card
+## Physical card and submissions
 
-- `dist/memories-wish-scene.js` owns paper geometry and lift/insertion motion.
-  It projects the card's tabletop anchor into a screen-space layer, so the same
-  DOM paper can travel to a readable foreground position. No replacement modal
-  is created, and the box never opens.
-- `liftWishCard()` brings the paper forward. `activateWishForm()` enables fields
-  only during the reading segment. Keyboard/pointer focus pauses scroll and
-  freezes the paper dimensions; inputs keep normal text selection and scrolling.
-- `calculateSlotTarget()` reads the real slot anchor with
-  `getBoundingClientRect()`. `insertCardIntoSlot()` flies to that measured opening,
-  aligns the lower edge, then clips the paper below the fixed slot line while
-  feeding it into the box. Opacity decreases only after 94% has entered.
-- `playSubmittedConfirmation()` is a one-time 1 → 1.01 → 1 box confirmation,
-  gated by successful submission. `exitMoneyBoxScene()` restores the overview.
-- `dist/memories-interactions.js` owns validation, input/resize locks, in-memory
-  drafts, success/error presentation, and the existing fullscreen image viewer.
-  Skipping and reverse-scrolling never invoke the submission callback.
-- The host callback's returned message is displayed on the same paper. The
-  camera stays still for the acknowledgement, then scrolls into the insertion
-  phase. Failed requests retain the draft and allow retry. Pending requests
-  suppress duplicate submits. All listeners, timers and tweens are cleaned up.
+`memories-wish-scene.js` projects the tabletop anchor into a screen-space paper.
+It owns lift, foreground positioning, clipping through the measured slot and
+subtle submitted confirmation. The box stays closed. A long local perspective
+keeps the small resting card's foreshortening natural before it lifts.
 
-## Connect Google Sheets
+`memories-interactions.js` retains the fullscreen image viewer and owns form
+validation, in-memory drafts, focus/keyboard locks, success/error and cleanup.
+Typing holds the card and camera. Skipping or reversing never submits data.
+The same paper returns through the real slot; clipping starts at arrival, and
+opacity drops only after94% of the sheet has entered. Each site's names and
+AU/UA artwork remain independent. The bride now uses this same paper story
+instead of its earlier hinged-box form.
 
-1. Open the destination spreadsheet and its **Extensions → Apps Script** editor.
-2. Copy `apps-script/loi-chuc.gs` into that bound project. The reference `.gs` file
-   lives in the repository only; it is not loaded by the frontend.
-3. Deploy the project as a web app with permission for wedding guests to submit.
-4. In `dist/index.html`, replace **`APPS_SCRIPT_URL`** in the inline
-   `window.onWeddingWishSubmit` callback immediately before
-   `memories-interactions.js` with the deployed HTTPS `/exec` URL.
+Replace `APPS_SCRIPT_URL` in **dist/index.html**, in the inline
+`window.onWeddingWishSubmit` callback before `memories-interactions.js`, with
+that site's deployed HTTPS Apps Script `/exec` URL. The placeholder remains
+unconfigured by request. `apps-script/loi-chuc.gs` is repository reference only.
+There is no localStorage success/demo fallback. The callback's message supplies
+the thank-you state; failed requests preserve the draft. The requested no-cors
+transport cannot verify a Sheet row in frontend code; test that after configuring
+the real URL. Local verification uses a mock callback, never a real guest wish.
 
-The placeholder is intentionally left unconfigured. The callback guards against
-accidentally posting to a relative placeholder URL. Only an explicit valid form
-submission calls it. Payload: `name`, `message` (maximum 1000 characters), and
-`anonymous`; the script appends a server timestamp in the first sheet.
+## Responsive and fallback
 
-The requested `mode: 'no-cors'` transport returns an opaque response: frontend
-code cannot verify that Google actually appended a row. After configuring the
-URL, make one submission and check the destination sheet. Local QA mocks the
-callback and does not claim an end-to-end Google Sheets delivery.
+The established album engine still renders10 desktop or15 mobile spreads.
+Mobile shortens camera travel; tablet reduces the pin distance. Reduced motion
+provides all35 photographs and a usable form in normal flow. The no-JS fallback
+retains35 linked photographs. No global fonts, branding or page sections change.
 
-## Ceremony and reception configuration
+## Validation — 2026-10-05
 
-Edit `dist/wedding-config.js`:
+Chromium checks cover1440 × 1000,820 × 1180,390 × 844 and320 × 640 on both
+editions. All resting feet and flat objects remain inside the source tabletop
+plane; measured cluster/album/box ratios are34.0% /20.5% /12.4%. The complete
+base and all objects are present even at the start of intro; no legacy base
+request occurs. The full base, including floor flowers, fits every overview.
 
-- `ceremony: '09:00'` — **[ĐIỀN GIỜ LỄ]**
-- `reception: '11:00'` — **[ĐIỀN GIỜ ĐÓN KHÁCH]**
+All five frame viewers and the album viewer open and restore scroll position.
+Resizing preserves the active album photographs across10/15-spread pagination.
+Card clipping meets the measured slot within1px at all four viewport widths.
+Typing freezes the scene, including a simulated mobile keyboard height change.
+Skipping issues no requests; a mock callback is called once on submit and the
+card completes insertion. Placeholder failures retain the draft. No real Sheet
+was contacted. Reduced-motion and no-JS checks expose all35 photographs.
 
-Use 24-hour `HH:mm`. `countdown.js` derives the target from ceremony time,
-`2026-10-25`, and `+07:00`. Section 04, its timeline, the countdown note, and meta
-description use these configured values. Also update the static values in
-`index.html` when changing them, so no-JS content and initial metadata agree.
-
-## Files and original artwork
-
-`memories-data.js` contains captions, alt text, IDs, source URLs and site identity.
-`memories.css` styles the scene; `memories-interactions.css` styles paper/viewer;
-`memories-album.js` / `.css` keep the established page engine.
-
-The supplied WebP assets are unchanged: `table.webp`, `frame.webp`,
-`album-au.webp`, and `money-box-au.webp`. Flower contact layers reuse cropped
-views of the table artwork; no additional photo download is required.
-
-## Validation (2026-10-05)
-
-Chromium checks passed on desktop 1440 × 1000, tablet 820 × 1180, phone
-390 × 844, plus slot geometry checks at width 320. Frame/album viewer closing
-restored scroll position. Skip issued zero requests; a mocked successful callback
-was called once and completed insertion. Placeholder failure retained the draft.
-Typing held the timeline and survived a mobile height resize plus refresh.
-The real callback's POST body and content type were checked with an intercepted
-request; no real Google Sheet was contacted. The clipped paper edge aligned
-with the slot within 1px after all four tested width changes. Reduced motion
-and no-JS paths each retained 35 images. There is exactly one H1 and no old
-09:30 / 10:30 time in published content or countdown code.
-
-## Complete-table introduction
-
-The table is fully dressed from the first frame. `mem-table-art` displays the
-complete `tableAsset` once, without complementary flower/cloth clips or a
-`decorAsset`. Its front lip aligns with the existing object footprints; no
-separate tabletop overlay is rendered. Foreground contact flowers and pearls
-are present from the outset;
-they never rise or reveal separately.
-
-The intro settles the whole world camera from 0.96 to 1 over 0.34 timeline units.
-Only afterward do the five frames, album and money box rise 8 world pixels with
-a small stagger. Each object's contact shadow reveals at the same time. The
-groom's physical wish card continues to follow the box's visibility. All later
-photo, album and wish phases, responsive timings and site-specific assets are
-preserved. Reversing the intro returns to a complete, already decorated table.
+After editing photo data, run `node scripts/sync-memories-fallback.mjs` from the
+site root to regenerate only its no-JavaScript Memories gallery. Original photo
+order, source URLs and per-site identity were compared with the prior commit.

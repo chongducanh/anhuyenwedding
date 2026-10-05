@@ -12,7 +12,7 @@
     shade.setAttribute('aria-hidden', 'true');
     stage.insertBefore(shade, host);
     let confirmed = false, confirmation = null, destroyed = false;
-    gsap.set(paper, {transformOrigin: '50% 50%', transformPerspective: 1200});
+    gsap.set(paper, {transformOrigin: '50% 50%', transformPerspective: 6000});
     function localRect(node) {
       const rect = node.getBoundingClientRect(), viewport = stage.getBoundingClientRect();
       return {x: rect.left - viewport.left, y: rect.top - viewport.top,
@@ -42,8 +42,8 @@
       const lift = clamp(state.lift), insertion = clamp(state.insert);
       const w = paper.offsetWidth, h = paper.offsetHeight;
       let x = mix(start.x, front.x, lift), y = mix(start.y, front.y, lift);
-      let scale = mix(start.scale, front.scale, lift), rotation = mix(-5, 0, lift);
-      let rotationX = mix(54, 0, lift), clip = 0, opacity = 1;
+      let scale = mix(start.scale, front.scale, lift), rotation = mix(window.WEDDING_TABLE_LAYOUT.card.r, 0, lift);
+      let rotationX = mix(window.WEDDING_TABLE_LAYOUT.card.tilt, 0, lift), clip = 0, opacity = 1;
       if (insertion > 0) {
         const target = calculateSlotTarget();
         // First fly with the lower edge aligned just above the slot, then feed
@@ -66,7 +66,7 @@
       gsap.set(paper, {x: x - w / 2, y: y - h / 2, scale, rotation, rotationX,
         opacity: opacity * distant, visibility: opacity * distant > .001 ? 'visible' : 'hidden',
         clipPath: `inset(0 0 ${clip}% 0)`,
-        boxShadow: lift > .1 ? '8px 22px 60px #18081270' : '8px 10px 12px #180812a6'});
+        boxShadow: lift > .1 ? '8px 22px 60px #18081270' : '3px 5px 6px #210b0aa6'});
       const stationery = (1 - lift) + clamp(insertion / .6);
       gsap.set(wish.letterhead, {y: h * .25 * stationery, scale: 1 + .4 * stationery, transformOrigin: '50% 0'});
       const writingOpacity = clamp((lift - .70) / .30) * (1 - clamp(insertion / .18));
