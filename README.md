@@ -41,3 +41,8 @@ callback lời chúc và bộ đồ họa WebP.
 Giờ lễ/đón khách: `dist/wedding-config.js` (mặc định 09:00 / 11:00).
 Kết nối lời chúc: thay `APPS_SCRIPT_URL` trong `dist/index.html`; mã Google Apps
 Script tham khảo nằm tại `apps-script/loi-chuc.gs`. Endpoint chưa được cấu hình.
+
+## Hành trình
+
+Xem [JOURNEY.md](JOURNEY.md) để sửa ngày, gán 4 ảnh kỷ niệm và điều chỉnh
+film helix. Section dùng cấu hình nhà trai/nhà gái sẵn có.
