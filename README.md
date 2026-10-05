@@ -39,8 +39,9 @@ Xem [WEDDING_MEMORIES.md](WEDDING_MEMORIES.md) cho cấu trúc camera, album l�
 callback lời chúc và bộ đồ họa WebP.
 
 Giờ lễ/đón khách: `dist/wedding-config.js` (mặc định 09:00 / 11:00).
-Kết nối lời chúc: thay `APPS_SCRIPT_URL` trong `dist/index.html`; mã Google Apps
-Script tham khảo nằm tại `apps-script/loi-chuc.gs`. Endpoint chưa được cấu hình.
+Kết nối lời chúc: URL Google Apps Script đã được cấu hình trong `dist/index.html`.
+Hai site gửi về cùng Sheet, tab `gift`. Mã tham khảo: `apps-script/loi-chuc.gs`;
+xem [WEDDING_MEMORIES.md](WEDDING_MEMORIES.md) để đổi endpoint hoặc triển khai lại script.
 
 ## Hành trình
 
