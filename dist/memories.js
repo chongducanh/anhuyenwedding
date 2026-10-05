@@ -1,4 +1,4 @@
-/* Wedding Memories — a world-space camera and ten scroll-controlled phases.
+/* Wedding Memories — a world-space camera and a reversible scroll story.
    Assets and photographs live in memories-data.js; there is no autoplay. */
 (() => {
  'use strict';
@@ -15,10 +15,11 @@
   if(!section||!data)return{destroy(){}};
   const stage=section.querySelector('.mem-stage'),world=section.querySelector('.mem-world');
   const wishHost=section.querySelector('.mem-wish-host'),heading=section.querySelector('.mem-heading');
+  const captionHint=section.querySelector('.mem-caption-hint');
   const caption=section.querySelector('.mem-caption-text'),indexLabel=section.querySelector('.mem-caption-index');
   const hint=section.querySelector('.mem-scroll-hint'),progress=section.querySelector('.mem-progress>span');
   const nav=[...section.querySelectorAll('[data-memory-jump]')];
-  const listeners=[],locks=new Set();let destroyed=false,timeline=null,lockedAt=null,lockedScroll=0,wasPaused=false;
+  const listeners=[],locks=new Set();let destroyed=false,timeline=null,lockedAt=null,lockedScroll=0,wasPaused=false,wishScene=null,submissionTravel=null;
   const listen=(target,type,callback,options)=>{target.addEventListener(type,callback,options);listeners.push(()=>target.removeEventListener(type,callback,options));};
   const scroll=()=>getSmoother()?.scrollTop()??window.scrollY;
   const restoreScroll=y=>{const smoother=getSmoother();if(smoother)smoother.scrollTop(y);else window.scrollTo(0,y);};
@@ -36,7 +37,15 @@
   const allPhotos=[...data.photos,...data.album];
   const viewer=window.WeddingMemoryViewer.create({photos:allPhotos,getSmoother,reduced,onLock:()=>lock('viewer'),onUnlock:()=>unlock('viewer')});
   const openPhoto=(photo,button)=>viewer.open(photo,button);
-  const wish=window.WeddingWishForm.create({mount:wishHost,site:data.site,reduced,onLock:()=>lock('wish'),onUnlock:()=>unlock('wish')});
+  const wish=window.WeddingWishForm.create({mount:wishHost,site:data.site,reduced,onLock:()=>lock('wish'),onUnlock:()=>unlock('wish'),onSubmitted:()=>continuePastCard(true),onResume:()=>continuePastCard(false)});
+  listen(wish.element,'wedding-wish-acknowledged',()=>{section.dataset.state='CARD_SUBMITTED';});
+  function continuePastCard(submitted){
+   if(reduced||destroyed||!timeline?.scrollTrigger)return;
+   wish.releaseEditing();
+   const st=timeline.scrollTrigger;
+   const target=timeline.labels[submitted?'card-inserted':'card-insert']+(submitted?.08:.02);
+   submissionTravel=gsap.to(window,{scrollTo:{y:st.start+target/timeline.duration()*(st.end-st.start),autoKill:true},duration:submitted?3: .6,ease:'none',overwrite:'auto'});
+  }
   const createPhoto=(photo,index)=>{
    const button=el('button','mem-frame');button.type='button';button.dataset.photoId=photo.id;
    button.setAttribute('aria-label',`Xem toàn bộ ảnh: ${photo.caption}`);
@@ -54,7 +63,7 @@
    const tableGallery=el('div','mem-static-frames');frames=data.photos.map(createPhoto);tableGallery.append(...frames);world.append(tableGallery);
    const mount=el('div','mem-static-album');world.append(mount);
    album=window.WeddingAlbum.create({mount,photos:data.album,site:data.site,onPhotoClick:openPhoto,mobile,reduced:true});
-   wish.setActive(true);caption.textContent='Những hình ảnh để giữ. Những lời thương để trao.';hint.textContent='Bấm ảnh để xem trọn khung';
+   wish.setActive(true);captionHint.textContent='';caption.textContent='Những hình ảnh để giữ. Những lời thương để trao.';hint.textContent='Bấm ảnh để xem trọn khung';
    nav.forEach(button=>listen(button,'click',()=>{const target=button.dataset.memoryJump==='wishes'?wishHost:button.dataset.memoryJump==='album'?mount:tableGallery;target.scrollIntoView({behavior:'instant',block:'start'});}));
   }else{
    const backdrop=el('div','mem-world-backdrop');backdrop.setAttribute('aria-hidden','true');world.append(backdrop);
@@ -67,8 +76,7 @@
    else{decor.innerHTML='<div class="mem-vase"></div><svg viewBox="0 0 260 260" fill="none"><g stroke="#a88d63" stroke-width="1.2"><path d="M128 252Q130 127 54 58M128 250Q142 125 211 47M129 248Q77 152 21 134M133 233Q176 142 252 113M128 230V33"/><path d="M59 66q-52 11-44-35 40 3 44 35ZM73 84q47-9 25-45-31 17-25 45ZM188 79q4-52 46-46 4 32-46 46ZM169 114q-41-14-34-45 38 1 34 45ZM62 160q-47 7-50-28 32-9 50 28ZM202 135q47 5 43-33-29 0-43 33ZM128 58q-29-24-6-46 31 16 6 46Z"/></g></svg>';}
    if(data.site.decorInTable){table.classList.add('mem-table--split-art');decor.classList.add('mem-decor--table-art');}
    world.append(decor);
-   // A real support plane: rear feet at y=490, front feet at y=595.
-   // The cloth starts at the front lip (y=630), never behind floating objects.
+   // Shallow tabletop, rear feet at y=495 and front feet at y=536.
    const tabletop=el('div','mem-table-surface mem-object');tabletop.setAttribute('aria-hidden','true');world.append(tabletop);
    const contacts=new Map();
    function contact(node,x,y,width,height=22){
@@ -77,11 +85,11 @@
     world.append(shadow);contacts.set(node,shadow);return shadow;
    }
    const positions=[
-    {x:298,y:431,w:230,h:164,r:-1.5,row:'front'},
-    {x:405,y:260,w:164,h:230,r:-1,row:'back'},
-    {x:605,y:239,w:174,h:251,r:0,row:'back'},
-    {x:808,y:267,w:156,h:223,r:1,row:'back'},
-    {x:886,y:387,w:150,h:209,r:1.5,row:'front'}
+    {x:328,y:442,w:140,h:94,r:-1,row:'front'},
+    {x:340,y:336,w:105,h:159,r:-.8,row:'back'},
+    {x:477,y:313,w:120,h:182,r:.5,row:'back'},
+    {x:543,y:411,w:87,h:128,r:1,row:'front'},
+    {x:631,y:343,w:101,h:152,r:-.5,row:'back'}
    ];
    frames=data.photos.map((photo,i)=>{
     const width=Math.min(154,850/data.photos.length),height=width*photo.height/photo.width+16;
@@ -89,81 +97,110 @@
     const n=createPhoto(photo,i),p=photo.placement||(data.photos.length===5?positions[i]:placement);
     Object.assign(n.style,{left:p.x+'px',top:p.y+'px',width:p.w+'px',height:p.h+'px'});n.dataset.rotation=p.r;n.dataset.row=p.row||'back';n.classList.add('mem-object');world.append(n);contact(n,p.x+5,p.y+p.h-4,p.w*1.08);return n;
    });
-   const albumMount=el('div','mem-album-mount mem-object');Object.assign(albumMount.style,{left:'510px',top:'463px',width:'420px',height:'210px'});world.append(albumMount);
+   const albumMount=el('div','mem-album-mount mem-object');Object.assign(albumMount.style,{left:'570px',top:'439px',width:'320px',height:'160px'});world.append(albumMount);
    album=window.WeddingAlbum.create({mount:albumMount,photos:data.album,site:data.site,onPhotoClick:openPhoto,mobile,reduced:false});
-   contact(albumMount,603,603,245,35);
+   contact(albumMount,647,556,188,24);
    const box=el('div','mem-money-box mem-object');box.setAttribute('aria-hidden','true');
-   const inside=el('div','mem-box-inside'),door=el('div','mem-box-door');
-   if(data.site.boxAsset){const image=el('img','mem-box-art');image.src=data.site.boxAsset;image.alt='';image.decoding='async';door.append(image);}
-   else{door.append(el('span','mem-box-slot'),el('span','mem-box-monogram',data.site.initials),el('span','mem-box-label','WITH LOVE'));door.classList.add('mem-box-door--drawn');}
-   box.append(inside,door);world.append(box);contact(box,1004,539,170,29);
+   const boxImage=el('img','mem-box-art');boxImage.src=data.site.boxAsset;boxImage.alt='';boxImage.decoding='async';box.append(boxImage);
+   const slot=el('span','mem-money-slot');box.append(slot);world.append(box);contact(box,1020,537,151,23);
+   const cardAnchor=el('div','mem-card-anchor');cardAnchor.setAttribute('aria-hidden','true');world.append(cardAnchor);
+   const wishArea=el('div','mem-wish-area');wishArea.setAttribute('aria-hidden','true');world.append(wishArea);
+   wishScene=window.WeddingWishScene.create({gsap,stage,host:wishHost,world,anchor:cardAnchor,box,slot,wish,mobile});
    // Cropped views of the supplied flower garland, plus pearl strands, occlude
    // only feet/edges. They share the same light direction as the contact shadows.
    const foreground=el('div','mem-table-foreground mem-object');foreground.setAttribute('aria-hidden','true');
    if(data.site.tableAsset){
-    const clusters=[{x:319,y:566,w:142,h:72,view:'80 980 310 180'},
-     {x:540,y:477,w:88,h:48,view:'340 1040 240 135'},
-     {x:743,y:596,w:100,h:55,view:'480 1050 240 145'},
-     {x:1028,y:513,w:145,h:66,view:'750 1020 290 170'}];
+    const clusters=[{x:328,y:516,w:93,h:42,view:'80 980 310 180'},
+     {x:590,y:518,w:68,h:34,view:'340 1040 240 135'},
+     {x:783,y:561,w:70,h:37,view:'480 1050 240 145'},
+     {x:1069,y:519,w:98,h:45,view:'750 1020 290 170'}];
     clusters.forEach(c=>{const cluster=el('div','mem-flower-contact');Object.assign(cluster.style,{left:c.x+'px',top:c.y+'px',width:c.w+'px',height:c.h+'px'});
      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox',c.view);svg.setAttribute('preserveAspectRatio','none');
      const image=document.createElementNS('http://www.w3.org/2000/svg','image');image.setAttribute('href',data.site.tableAsset);image.setAttribute('width','1122');image.setAttribute('height','1402');svg.append(image);cluster.append(svg);foreground.append(cluster);});
    }
    const pearls=document.createElementNS('http://www.w3.org/2000/svg','svg');pearls.classList.add('mem-table-pearls');pearls.setAttribute('viewBox','0 0 1440 1000');
-   const strand='M342 584C382 628 481 615 526 584 M561 490C571 513 592 518 619 506 M619 616C663 655 766 650 815 615 M969 584C999 610 1101 605 1132 555';
+   const strand='M352 533C403 555 469 549 510 534 M585 537C609 548 632 546 650 538 M665 581C706 602 779 595 812 578 M963 550C1004 575 1090 574 1121 539';
    ['shadow','thread','beads'].forEach(type=>{const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',strand);path.classList.add('mem-pearl-'+type);pearls.append(path);});
    foreground.append(pearls);world.append(foreground);
    const shadows=[...contacts.values()];
    sceneObjects=[table,tabletop,decor,...frames,albumMount,box,foreground];
    const dimensions=()=>({width:stage.clientWidth,height:stage.clientHeight});
    const baseScale=()=>{const v=dimensions();return Math.min(v.width*.96/(mobile?1200:CONFIG.worldWidth),v.height*.78/1000);};
-   // World-space positions never include the currently transformed camera. This
-   // prevents accumulating error and centers the same image after every resize.
-   function getCameraTransform(target,widthRatio=.82,heightRatio=.73,screenY=.51){
-    const v=dimensions();return {cx:target.offsetLeft+target.offsetWidth/2,cy:target.offsetTop+target.offsetHeight/2,zoom:Math.min(v.width*widthRatio/target.offsetWidth,v.height*heightRatio/target.offsetHeight)/baseScale(),screenY};
+   // Read the true laid-out bounds and invert only the world camera matrix.
+   // Frame rotations are below one degree; offset bounds avoid rotation drift.
+   function getFocusTransform(target,widthRatio=.82,heightRatio=.73,screenY=.51){
+    const v=dimensions(),rect=target.getBoundingClientRect(),wr=world.getBoundingClientRect();
+    const scale=Number(gsap.getProperty(world,'scaleX'))||1;
+    const width=target.offsetWidth,height=target.offsetHeight;
+    const cx=(rect.left+rect.width/2-wr.left)/scale,cy=(rect.top+rect.height/2-wr.top)/scale;
+    const focusScale=Math.min(v.width*widthRatio/width,v.height*heightRatio/height);
+    return {cx,cy,zoom:focusScale/baseScale(),screenY};
    }
    let bookTypeScale=0;
-   function renderCamera(){const v=dimensions(),s=baseScale()*camera.zoom;gsap.set(world,{x:v.width/2-camera.cx*s,y:v.height*camera.screenY-camera.cy*s,scale:s,force3D:false});const type=1/Math.min(v.width*CONFIG.albumScale/albumMount.offsetWidth,v.height*.82/albumMount.offsetHeight);if(type!==bookTypeScale){bookTypeScale=type;albumMount.style.setProperty('--mem-book-type-scale',type);}}
+   function renderCamera(){const v=dimensions(),s=baseScale()*camera.zoom;gsap.set(world,{x:v.width/2-camera.cx*s,y:v.height*camera.screenY-camera.cy*s,scale:s,force3D:false});const type=1/Math.min(v.width*CONFIG.albumScale/albumMount.offsetWidth,v.height*.82/albumMount.offsetHeight);if(type!==bookTypeScale){bookTypeScale=type;albumMount.style.setProperty('--mem-book-type-scale',type);}wishScene?.render();}
    function paintAlbum(){album.setOpen(bookState.open);album.setPage(bookState.page);album.setClose(bookState.close);}
-   const targetCamera=(tl,target,length,w=.82,h=.73,y=.51,at)=>tl.to(camera,{cx:()=>getCameraTransform(target,w,h,y).cx,cy:()=>getCameraTransform(target,w,h,y).cy,zoom:()=>getCameraTransform(target,w,h,y).zoom,screenY:y,duration:length,ease:'sine.inOut',onUpdate:renderCamera},at);
+   const targetCamera=(tl,target,length,w=.82,h=.73,y=.51,at)=>tl.to(camera,{cx:()=>getFocusTransform(target,w,h,y).cx,cy:()=>getFocusTransform(target,w,h,y).cy,zoom:()=>getFocusTransform(target,w,h,y).zoom,screenY:y,duration:length,ease:'sine.inOut',onUpdate:renderCamera},at);
    const overview=(tl,length)=>tl.to(camera,{cx:720,cy:CONFIG.worldCenterY,zoom:1,screenY:.55,duration:length,ease:'sine.inOut',onUpdate:renderCamera});
-   function focusObjects(tl,focus,at=0){tl.to(sceneObjects.filter(n=>n!==focus),{opacity:.14,duration:mobile?.15:.35},at).to(shadows,{opacity:.08,duration:.2},at).to(focus,{opacity:1,duration:mobile?.15:.35},at);}
+   function focusObjects(tl,focus,at=0){tl.to(wishScene.state,{ambient:0,duration:.3},at);tl.to(sceneObjects.filter(n=>n!==focus),{opacity:.14,duration:mobile?.15:.35},at).to(shadows,{opacity:.08,duration:.2},at).to(focus,{opacity:1,duration:mobile?.15:.35},at);}
    const buildPart=(name,build)=>{const child=gsap.timeline();build(child);const start=timeline.duration();timeline.addLabel(name,start).add(child,start);phases.push({name,start,end:start+child.duration()});return{start,duration:child.duration()};};
-   gsap.set(world,{transformOrigin:'0 0'});gsap.set(sceneObjects,{autoAlpha:0,y:45});gsap.set(frames,{rotation:i=>Number(frames[i].dataset.rotation),transformOrigin:'50% 100%'});gsap.set(albumMount,{rotation:-12,rotationX:62,transformOrigin:'50% 50%'});gsap.set(shadows,{autoAlpha:0});gsap.set(wishHost,{autoAlpha:0,y:18});gsap.set(door,{transformOrigin:'12% 60%'});
-   gsap.set(inside,{autoAlpha:0});
+   gsap.set(world,{transformOrigin:'0 0'});gsap.set(sceneObjects,{autoAlpha:0,y:45});gsap.set(frames,{rotation:i=>Number(frames[i].dataset.rotation),transformOrigin:'50% 100%'});gsap.set(albumMount,{rotation:-4,rotationX:58,transformOrigin:'50% 50%'});gsap.set(shadows,{autoAlpha:0});gsap.set(wishHost,{autoAlpha:1});
    timeline=gsap.timeline({defaults:{ease:'none'},onUpdate:updateExperience});
    // PHASE 1 — A sequential table, decor, five frames, album and money box reveal.
    buildPart('intro',tl=>{tl.to([table,tabletop],{autoAlpha:1,y:0,duration:.28},0).to(decor,{autoAlpha:1,y:0,duration:.3},.12).to(frames,{autoAlpha:1,y:0,stagger:.055,duration:.3},.22).to(shadows,{autoAlpha:1,stagger:.045,duration:.22},.35).to(albumMount,{autoAlpha:1,y:0,duration:.25},.53).to(box,{autoAlpha:1,y:0,duration:.25},.65).to(foreground,{autoAlpha:1,y:0,duration:.22},.68);hold(tl,mobile?.18:.35);});
    // PHASE 2 — Move the entire camera between framed pictures, then pause to read.
-   data.photos.forEach((photo,i)=>{
+   function focusTablePhoto(photo,i){
     const length=mobile?CONFIG.mobilePhotoScrollLength:CONFIG.photoScrollLength,travel=mobile?length*.62:Math.min(CONFIG.cameraDuration,length*.7);
-    const part=buildPart(`photo-${i}`,tl=>{focusObjects(tl,frames[i]);targetCamera(tl,frames[i],travel,CONFIG.photoFocusScale,.7,.50,0);tl.to(frames[i],{rotation:0,duration:length*.35},0);hold(tl,length-travel);});
+    const part=buildPart(`photo-${i}`,tl=>{focusObjects(tl,frames[i]);targetCamera(tl,frames[i],travel,tablet?.68:CONFIG.photoFocusScale,.7,.50,0);tl.to(frames[i],{rotation:0,duration:length*.35},0);hold(tl,length-travel);});
     photoRanges.push({...part,photo,index:i,end:part.start+part.duration});
-   });
+   }
+   data.photos.forEach(focusTablePhoto);
    timeline.addLabel('photos',photoRanges[0].start);
    // PHASE 3 — Camera returns through the tabletop and travels to the album.
-   buildPart('album-focus',tl=>{overview(tl,mobile?.22:.58);tl.to(sceneObjects,{opacity:1,duration:mobile?.16:.3},0).to(shadows,{opacity:1,duration:.2},0);focusObjects(tl,albumMount,mobile?.22:.58);targetCamera(tl,albumMount,mobile?.3:.75,CONFIG.albumScale,.82,.49);tl.to(albumMount,{rotation:0,rotationX:0,duration:mobile?.24:.5},mobile?.22:.58);});
+   function focusAlbum(tl){overview(tl,mobile?.22:.58);tl.to(sceneObjects,{opacity:1,duration:mobile?.16:.3},0).to(shadows,{opacity:1,duration:.2},0);focusObjects(tl,albumMount,mobile?.22:.58);targetCamera(tl,albumMount,mobile?.3:.75,CONFIG.albumScale,.82,.49);tl.to(albumMount,{rotation:0,rotationX:0,duration:mobile?.24:.5},mobile?.22:.58);}
+   buildPart('album-focus',focusAlbum);
    // PHASE 4 — The cloth cover folds left to reveal the first physical spread.
-   buildPart('album-open',tl=>{tl.to(bookState,{open:1,duration:mobile?.34:.8,onUpdate:paintAlbum,ease:'sine.inOut'});hold(tl,mobile?.12:.25);});
+   function openAlbum(tl){tl.to(bookState,{open:1,duration:mobile?.34:.8,onUpdate:paintAlbum,ease:'sine.inOut'});hold(tl,mobile?.12:.25);}
+   buildPart('album-open',openAlbum);
    timeline.addLabel('album',timeline.duration());
    // PHASE 5 — One independent scroll segment per spread, based on data count.
-   for(let i=0;i<album.spreadCount;i++){
+   function flipAlbumPage(i){
     const length=mobile?CONFIG.mobileAlbumPageScrollLength:CONFIG.albumPageScrollLength;
     const part=buildPart(`spread-${i}`,tl=>{if(i)tl.to(bookState,{page:i,duration:length*.58,ease:'sine.inOut',onUpdate:paintAlbum});hold(tl,i?length*.42:length);});
     pageRanges.push({...part,index:i,end:part.start+part.duration});
    }
+   for(let i=0;i<album.spreadCount;i++)flipAlbumPage(i);
    // PHASE 6 — Clickable page buttons open the separately managed fullscreen viewer.
    // PHASE 7 — Close the final spread and return the closed book to the tabletop.
-   buildPart('album-close',tl=>{tl.to(bookState,{close:1,duration:mobile?.3:.65,ease:'sine.inOut',onUpdate:paintAlbum});overview(tl,mobile?.25:.6);tl.to(sceneObjects,{opacity:1,duration:.25},mobile?.3:.65).to(shadows,{opacity:1,duration:.25},mobile?.3:.65).to(albumMount,{rotation:-12,rotationX:62,duration:.25},mobile?.3:.65);tl.to(frames,{rotation:i=>Number(frames[i].dataset.rotation),duration:.25},mobile?.3:.65);});
-   // PHASE 8 — The same world camera approaches the money box.
-   buildPart('box-focus',tl=>{focusObjects(tl,box);targetCamera(tl,box,mobile?.3:.8,.92,.82,.51,0);});
-   // PHASE 9 — Door opens; the form lives in a stable, untransformed screen plane.
-   buildPart('box-open',tl=>{tl.to(inside,{autoAlpha:1,duration:.16},0).to(door,{rotationY:-112,xPercent:-10,opacity:.15,duration:mobile?.28:.6,ease:'sine.inOut'},0).to(wishHost,{autoAlpha:1,y:0,duration:.2});});
+   function closeAlbum(tl){
+    const folding=mobile?.3:.65;
+    tl.to(bookState,{close:1,duration:folding,ease:'sine.inOut',onUpdate:paintAlbum},0);
+    overview(tl,mobile?.25:.6);
+    tl.to(sceneObjects,{opacity:1,duration:.25},folding)
+      .to(shadows,{opacity:1,duration:.25},folding)
+      .to(albumMount,{rotation:-4,rotationX:58,duration:.25},folding)
+      .to(frames,{rotation:i=>Number(frames[i].dataset.rotation),duration:.25},folding)
+      .to(wishScene.state,{ambient:1,duration:.3},folding);
+   }
+   buildPart('album-close',closeAlbum);
+   // PHASE 8 — Keep the complete scene visible around the closed money box.
+   function focusMoneyBox(tl){
+    targetCamera(tl,wishArea,mobile?.38:.85,tablet?.68:.76,.62,.5,0);
+    tl.to(sceneObjects,{opacity:1,duration:.3},0).to(shadows,{opacity:1,duration:.3},0);
+    hold(tl,mobile?.16:.3);
+   }
+   buildPart('box-focus',focusMoneyBox);
+   // PHASE 9 — The same paper lifts off the table; the box never opens.
+   buildPart('card-lift',tl=>{
+    if(mobile)tl.to(camera,{cx:()=>getFocusTransform(wishArea).cx-85,duration:.55,ease:'sine.inOut',onUpdate:renderCamera},0);
+    wishScene.liftWishCard(tl,mobile?.55:1);
+   });
    const formStart=timeline.duration();
-   buildPart('wishes',tl=>hold(tl,mobile?1.2:2));
+   buildPart('wishes',tl=>hold(tl,mobile?1.3:2));
    const formEnd=timeline.duration();
-   // PHASE 10 — Reverse the box opening, restore the table, then release the pin.
-   buildPart('exit',tl=>{tl.to(wishHost,{autoAlpha:0,y:12,duration:.18}).to(door,{rotationY:0,xPercent:0,opacity:1,duration:mobile?.25:.55,ease:'sine.inOut'}).to(inside,{autoAlpha:0,duration:.18},.18);overview(tl,mobile?.3:.75);tl.to(sceneObjects,{opacity:1,duration:.3},mobile?.43:.73).to(shadows,{opacity:1,duration:.3},mobile?.43:.73);tl.to(camera,{zoom:.94,screenY:.50,duration:mobile?.3:.5,onUpdate:renderCamera});tl.to(world,{opacity:.68,duration:mobile?.2:.4},'>-=0.15');});
+   buildPart('card-insert',tl=>wishScene.insertCardIntoSlot(tl,mobile?.9:1.5));
+   buildPart('card-inserted',tl=>hold(tl,mobile?.14:.3));
+   // PHASE 10 — See the whole table one last time before releasing the pin.
+   buildPart('exit',tl=>{overview(tl,mobile?.45:.85);hold(tl,mobile?.18:.4);});
    const total=timeline.duration();
    function calculateScrollDistance(){return Math.round(stage.clientHeight*total*(tablet?.85:1));}
    let guard=false;
@@ -172,17 +209,22 @@
     if(locks.size&&lockedAt!==null&&Math.abs(timeline.time()-lockedAt)>.001&&!guard){guard=true;timeline.time(lockedAt,true);guard=false;renderCamera();return;}
     const time=timeline.time();const phase=phases.find(p=>time>=p.start&&time<=p.end)||phases[0];
     const photo=photoRanges.find(p=>time>=p.start&&time<=p.end),page=pageRanges.find(p=>time>=p.start&&time<=p.end);
-    const isAlbum=!!page;const isForm=time>=formStart-.03&&time<formEnd+.02;
-    album.setInteractive(isAlbum);wish.setActive(isForm);
+    const isAlbum=!!page;const isForm=time>=formStart&&time<formEnd;
+    const isWish=time>=timeline.labels['box-focus'];
+    album.setInteractive(isAlbum);wishScene.activateWishForm(isForm);
     frames.forEach((frame,i)=>{frame.inert=!!page||time>=timeline.labels['album-focus']||!!photo&&photo.index!==i;});
     if(phase&&activePhase!==phase.name){
      activePhase=phase.name;section.dataset.phase=activePhase;
-     const focused=photo?frames[photo.index]:isAlbum||activePhase.startsWith('album')?albumMount:isForm||activePhase.startsWith('box')?box:null;
-     sceneObjects.forEach(object=>{object.style.filter=focused&&object!==focused&&!mobile?`blur(${CONFIG.blurAmount}px)`:'none';});
+     if(activePhase==='card-insert')wishScene.prepareCardForInsert();
+     if(activePhase==='exit')wishScene.exitMoneyBoxScene();
+     const focused=photo?frames[photo.index]:isAlbum||activePhase.startsWith('album')?albumMount:isWish?box:null;
+     sceneObjects.forEach(object=>{object.style.filter=focused&&!isWish&&object!==focused&&!mobile?`blur(${CONFIG.blurAmount}px)`:'none';});
      frames.forEach(frame=>{frame.style.zIndex=frame===focused?'20':frame.dataset.row==='front'?'7':'5';});
      albumMount.style.zIndex=focused===albumMount?'20':'8';box.style.zIndex=focused===box?'20':'6';
-     caption.textContent=photo?photo.photo.caption:page?'Bấm vào ảnh để xem trọn khung':isForm?'Một lời chúc, một kỷ niệm đẹp.':activePhase.startsWith('album')?'Lật từng trang, giữ từng khoảnh khắc.':activePhase.startsWith('box')?'Gửi lại một lời thương.':'Những điều đẹp đẽ, ở lại cùng nhau.';
+     caption.textContent=photo?photo.photo.caption:page?'Lật từng trang, giữ từng khoảnh khắc.':isForm?'Một lời chúc, một kỷ niệm đẹp.':activePhase.startsWith('album')?'Lật từng trang, giữ từng khoảnh khắc.':activePhase.startsWith('box')?'Gửi lại một lời thương.':'Những điều đẹp đẽ, ở lại cùng nhau.';
+     captionHint.textContent=page?'Bấm ảnh để xem trọn khung · Cuộn chậm để lật trang':'';
      indexLabel.textContent=photo?`${String(photo.index+1).padStart(2,'0')} / ${String(frames.length).padStart(2,'0')}`:page?`${String(page.index+1).padStart(2,'0')} / ${String(album.spreadCount).padStart(2,'0')}`:'';
+     section.dataset.state=photo?'PHOTO_FOCUS':page?'ALBUM_PAGE':isForm?(wish.submitted?'CARD_SUBMITTED':'CARD_INTERACTIVE'):({'intro':'TABLE_OVERVIEW','album-focus':'ALBUM_FOCUS','album-open':'ALBUM_OPEN','album-close':'ALBUM_CLOSING','box-focus':'MONEY_BOX_FOCUSED','card-lift':'CARD_PICKING_UP','card-insert':'CARD_INSERTING','card-inserted':'CARD_INSERTED','exit':'SCENE_EXITING'}[activePhase]||'TABLE_OVERVIEW');
      hint.textContent=page?'Cuộn chậm để lật trang':isForm?'Cuộn tiếp khi bạn đã sẵn sàng':'Cuộn để khám phá';
     }
     heading.classList.toggle('mem-heading--compact',time>timeline.labels['photo-0']&&time<timeline.labels.exit);
@@ -194,7 +236,7 @@
    // ScrollTrigger.create doesn't attach itself to a pre-existing timeline.
    timeline.scrollTrigger=trigger;
    nav.forEach(button=>listen(button,'click',()=>{
-    const name=button.dataset.memoryJump;unlock('wish');const target=timeline.labels[name]??0;
+    const name=button.dataset.memoryJump;if(wish.locked)wish.releaseEditing();const target=timeline.labels[name]??0;
     const y=trigger.start+(target+(name==='wishes'?.2:name==='album'?.15:.3))/total*(trigger.end-trigger.start);
     gsap.to(window,{scrollTo:{y,autoKill:true},duration:mobile?.65:.9,ease:'power2.inOut',overwrite:'auto'});
    }));
@@ -215,8 +257,8 @@
    if(token.albumPhotoId){const i=album.spreadPhotoIds.findIndex(ids=>ids.includes(token.albumPhotoId));if(i>=0)label=`spread-${i}`;}
    const phase=phases.find(p=>p.name===label)||phases[0];return phase.start+(phase.end-phase.start)*Math.max(0,Math.min(1,token.within||0));
   }
-  return {timeline,config:CONFIG,phases,photoRanges,pageRanges,getNavigationState,timeForNavigationState,getCameraState:()=>({cx:camera.cx,cy:camera.cy,zoom:camera.zoom,screenY:camera.screenY}),
-   destroy(){destroyed=true;viewer.destroy();wish.destroy();album?.destroy();timeline?.scrollTrigger?.kill();timeline?.kill();listeners.forEach(remove=>remove());locks.clear();document.documentElement.classList.remove('mem-interaction-locked');world.replaceChildren();wishHost.replaceChildren();section.classList.remove('mem-static');delete section.dataset.phase;gsap.set([world,wishHost,progress],{clearProps:'all'});heading.classList.remove('mem-heading--compact');}
+  return {timeline,config:CONFIG,phases,photoRanges,pageRanges,getNavigationState,timeForNavigationState,getCardState:()=>wishScene?{lift:wishScene.state.lift,insert:wishScene.state.insert,slot:wishScene.calculateSlotTarget()}:null,getCameraState:()=>({cx:camera.cx,cy:camera.cy,zoom:camera.zoom,screenY:camera.screenY}),
+   destroy(){destroyed=true;submissionTravel?.kill();wishScene?.destroy();viewer.destroy();wish.destroy();album?.destroy();timeline?.scrollTrigger?.kill();timeline?.kill();listeners.forEach(remove=>remove());locks.clear();document.documentElement.classList.remove('mem-interaction-locked');world.replaceChildren();wishHost.replaceChildren();section.classList.remove('mem-static');delete section.dataset.phase;delete section.dataset.state;gsap.set([world,wishHost,progress],{clearProps:'all'});heading.classList.remove('mem-heading--compact');}
   };
  }
  window.WeddingMemories={create,CONFIG};

@@ -1,4 +1,4 @@
-/* Separate site identity and user-supplied photo data. */
+/* Site identity, original photo order and editorial captions. */
 window.WEDDING_MEMORIES_DATA = {
   "site": {
     "key": "groom",
@@ -20,8 +20,8 @@ window.WEDDING_MEMORIES_DATA = {
       "thumb": "images/photo-aut00784-thumb.webp",
       "width": 960,
       "height": 640,
-      "alt": "Ảnh cưới Đức Anh và Nhật Uyên — khung hình 1",
-      "caption": "Khoảnh khắc 01",
+      "alt": "Giữa khoảng xanh — Đức Anh & Nhật Uyên",
+      "caption": "Giữa khoảng xanh",
       "objectPosition": "50% 40%"
     },
     {
@@ -31,8 +31,8 @@ window.WEDDING_MEMORIES_DATA = {
       "thumb": "images/photo-aut00999-thumb.webp",
       "width": 640,
       "height": 960,
-      "alt": "Ảnh cưới Đức Anh và Nhật Uyên — khung hình 2",
-      "caption": "Khoảnh khắc 02",
+      "alt": "Dắt tay qua nắng — Đức Anh & Nhật Uyên",
+      "caption": "Dắt tay qua nắng",
       "objectPosition": "50% 40%"
     },
     {
@@ -42,8 +42,8 @@ window.WEDDING_MEMORIES_DATA = {
       "thumb": "images/photo-aut01034-thumb.webp",
       "width": 640,
       "height": 960,
-      "alt": "Ảnh cưới Đức Anh và Nhật Uyên — khung hình 3",
-      "caption": "Khoảnh khắc 03",
+      "alt": "Ngồi lại bên nhau — Đức Anh & Nhật Uyên",
+      "caption": "Ngồi lại bên nhau",
       "objectPosition": "50% 40%"
     },
     {
@@ -53,8 +53,8 @@ window.WEDDING_MEMORIES_DATA = {
       "thumb": "images/photo-aut01039-thumb.webp",
       "width": 640,
       "height": 960,
-      "alt": "Ảnh cưới Đức Anh và Nhật Uyên — khung hình 4",
-      "caption": "Khoảnh khắc 04",
+      "alt": "Khẽ cúi bên nhau — Đức Anh & Nhật Uyên",
+      "caption": "Khẽ cúi bên nhau",
       "objectPosition": "50% 40%"
     },
     {
@@ -64,8 +64,8 @@ window.WEDDING_MEMORIES_DATA = {
       "thumb": "images/photo-aut01205-thumb.webp",
       "width": 640,
       "height": 960,
-      "alt": "Ảnh cưới Đức Anh và Nhật Uyên — khung hình 5",
-      "caption": "Khoảnh khắc 05",
+      "alt": "Đi cùng nhau — Đức Anh & Nhật Uyên",
+      "caption": "Đi cùng nhau",
       "objectPosition": "50% 40%"
     }
   ],
@@ -110,8 +110,8 @@ window.WEDDING_MEMORIES_DATA = {
       "thumb": "images/photo-aut01003-thumb.webp",
       "width": 640,
       "height": 960,
-      "alt": "Nắm tay một đời — ảnh cưới Đức Anh và Nhật Uyên",
-      "caption": "Nắm tay một đời",
+      "alt": "Tay trong tay — Đức Anh & Nhật Uyên",
+      "caption": "Tay trong tay",
       "objectPosition": "50% 40%"
     },
     {
@@ -132,8 +132,8 @@ window.WEDDING_MEMORIES_DATA = {
       "thumb": "images/photo-aut01064-thumb.webp",
       "width": 640,
       "height": 960,
-      "alt": "Tựa vào anh — ảnh cưới Đức Anh và Nhật Uyên",
-      "caption": "Tựa vào anh",
+      "alt": "Nép bên nhau — Đức Anh & Nhật Uyên",
+      "caption": "Nép bên nhau",
       "objectPosition": "50% 40%"
     },
     {
@@ -154,8 +154,8 @@ window.WEDDING_MEMORIES_DATA = {
       "thumb": "images/photo-aut01096-thumb.webp",
       "width": 640,
       "height": 960,
-      "alt": "Lời hẹn của đôi mình — ảnh cưới Đức Anh và Nhật Uyên",
-      "caption": "Lời hẹn của đôi mình",
+      "alt": "Chuyện của đôi mình — Đức Anh & Nhật Uyên",
+      "caption": "Chuyện của đôi mình",
       "objectPosition": "50% 40%"
     },
     {
@@ -209,8 +209,8 @@ window.WEDDING_MEMORIES_DATA = {
       "thumb": "images/photo-aut01204-thumb.webp",
       "width": 640,
       "height": 960,
-      "alt": "Có anh bên đời — ảnh cưới Đức Anh và Nhật Uyên",
-      "caption": "Có anh bên đời",
+      "alt": "Những điều nhỏ xinh — Đức Anh & Nhật Uyên",
+      "caption": "Những điều nhỏ xinh",
       "objectPosition": "50% 40%"
     },
     {
@@ -264,7 +264,7 @@ window.WEDDING_MEMORIES_DATA = {
       "thumb": "images/photo-aut01487-thumb.webp",
       "width": 640,
       "height": 960,
-      "alt": "Đức Anh & Nhật Uyên — ảnh cưới Đức Anh và Nhật Uyên",
+      "alt": "Đức Anh & Nhật Uyên",
       "caption": "Đức Anh & Nhật Uyên",
       "objectPosition": "50% 40%"
     },
@@ -330,8 +330,8 @@ window.WEDDING_MEMORIES_DATA = {
       "thumb": "images/photo-aut01647-thumb.webp",
       "width": 640,
       "height": 960,
-      "alt": "Một đời thương — ảnh cưới Đức Anh và Nhật Uyên",
-      "caption": "Một đời thương",
+      "alt": "Một đời bên nhau — Đức Anh & Nhật Uyên",
+      "caption": "Một đời bên nhau",
       "objectPosition": "50% 40%"
     },
     {

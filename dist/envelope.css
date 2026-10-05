@@ -30,8 +30,8 @@
 .opening-intro,.opening-dateline,.opening-controls,.closing-summary,.closing-dateline,.closing-actions{position:absolute;z-index:7;left:0;right:0;text-align:center;color:#f2e5d5}
 .opening-intro{top:26%;padding:0 6vw;pointer-events:none}
 .opening-intro .eyebrow{font-size:10px;letter-spacing:3.2px;margin-bottom:25px;color:#dfc2ba}
-.opening-intro h1{font:400 clamp(64px,8vw,128px)/1.1 var(--serif);letter-spacing:-2.5px}
-.opening-intro h1 em{font-size:.62em;color:#d4aea3;padding:0 .18em}
+.opening-intro #opening-title{font:400 clamp(64px,8vw,128px)/1.1 var(--serif);letter-spacing:-2.5px}
+.opening-intro #opening-title em{font-size:.62em;color:#d4aea3;padding:0 .18em}
 .opening-dateline,.closing-dateline{bottom:23%;pointer-events:none}
 .opening-dateline p,.closing-dateline p{font:400 21px var(--serif);letter-spacing:5px}
 .opening-dateline span,.closing-dateline span{display:block;font-size:9px;letter-spacing:2px;color:#d9bab2;margin-top:15px}
@@ -55,9 +55,9 @@
  .opening-card-space,.closing-card-space{perspective:1300px}
  .opening-intro{top:20%;padding-inline:7vw}
  .opening-intro .eyebrow{font-size:9px;letter-spacing:2.5px;margin-bottom:23px}
- .opening-intro h1{font-size:clamp(55px,15vw,83px);line-height:1;letter-spacing:-1.2px}
- .opening-intro h1 span{display:block}
- .opening-intro h1 em{display:block;font-size:.47em;line-height:1.2;padding:5px 0}
+ .opening-intro #opening-title{font-size:clamp(55px,15vw,83px);line-height:1;letter-spacing:-1.2px}
+ .opening-intro #opening-title span{display:block}
+ .opening-intro #opening-title em{display:block;font-size:.47em;line-height:1.2;padding:5px 0}
  .card-seal{width:63px;height:63px;font-size:24px;top:50%}
  .card-seal em{font-size:19px}
  .opening-dateline,.closing-dateline{bottom:24%}
@@ -83,7 +83,7 @@
  .closing-actions button,.closing-actions a{font-size:10px;min-height:44px}
 }
 @media(max-height:680px) and (min-width:701px){
- .opening-intro{top:24%}.opening-intro h1{font-size:clamp(58px,7vw,95px)}
+ .opening-intro{top:24%}.opening-intro #opening-title{font-size:clamp(58px,7vw,95px)}
  .opening-intro .eyebrow{margin-bottom:14px}.card-seal{width:61px;height:61px;font-size:24px;top:50%}
  .opening-dateline,.closing-dateline{bottom:24%}.opening-dateline span,.closing-dateline span{margin-top:9px}
  .opening-controls{bottom:5%}.opening-controls p{margin-top:10px}
@@ -94,7 +94,7 @@
 }
 @media(max-height:650px) and (max-width:700px){
  .opening-intro{top:19%}.opening-intro .eyebrow{margin-bottom:15px;font-size:8px}
- .opening-intro h1{font-size:49px}.card-seal{top:50%;width:50px;height:50px;font-size:19px}.card-seal em{font-size:16px}
+ .opening-intro #opening-title{font-size:49px}.card-seal{top:50%;width:50px;height:50px;font-size:19px}.card-seal em{font-size:16px}
  .opening-dateline,.closing-dateline{bottom:22%}.opening-dateline p,.closing-dateline p{font-size:17px}
  .opening-dateline span,.closing-dateline span{font-size:7px;margin-top:8px}
  .opening-controls{bottom:4%}.opening-controls p{margin-top:8px;font-size:8px}
@@ -106,7 +106,7 @@
 /* Landscape phones: a horizontal cover and invitation keep every action above the fold. */
 @media(max-height:500px) and (orientation:landscape){
  .opening-intro{top:25%}.opening-intro .eyebrow{font-size:8px;margin-bottom:10px}
- .opening-intro h1{font-size:46px;line-height:1.05;letter-spacing:-1px}.opening-intro h1 span,.opening-intro h1 em{display:inline;padding:0 .1em}
+ .opening-intro #opening-title{font-size:46px;line-height:1.05;letter-spacing:-1px}.opening-intro #opening-title span,.opening-intro #opening-title em{display:inline;padding:0 .1em}
  .card-seal{top:50%;width:44px;height:44px;font-size:17px}.card-seal em{font-size:14px}
  .opening-dateline,.closing-dateline{left:6vw;right:auto;bottom:9%;text-align:left}
  .opening-dateline p,.closing-dateline p{font-size:16px;letter-spacing:2px}.opening-dateline span,.closing-dateline span{font-size:7px;margin-top:6px}
@@ -147,7 +147,7 @@ html:not(.motion-enabled) .closing-summary{height:280px}
 html:not(.motion-enabled) .closing-dateline{padding-top:135px;padding-bottom:80px}
 html:not(.motion-enabled) .closing-card-space{height:600px}
 @media(max-width:700px){.opening-intro .eyebrow{margin-top:26px}.opening-photo img{object-position:50% 30%}}
-@media(max-height:650px) and (max-width:700px){.opening-intro h1{font-size:45px}.opening-intro .eyebrow{margin-top:18px}}
+@media(max-height:650px) and (max-width:700px){.opening-intro #opening-title{font-size:45px}.opening-intro .eyebrow{margin-top:18px}}
 @media(max-height:500px) and (orientation:landscape){.opening-intro .eyebrow{margin-top:15px}.opening-photo img{object-position:50% 32%}}
 @media print{.opening-stage{display:block!important}.opening-cover{display:none!important}.opening-photo{position:relative!important;height:700px!important}.opening-photo img{transform:none!important}}
 
@@ -160,8 +160,8 @@ html:not(.motion-enabled) .closing-card-space{height:600px}
 .opening-intro,.closing-summary,.motion-enabled .closing-summary{
  top:auto;bottom:calc(50% + var(--seal-size)/2 + var(--seal-gap));height:auto;padding:0 6vw;
 }
-.opening-intro h1,.closing-names{font:400 clamp(60px,7.5vw,118px)/1.06 var(--serif);letter-spacing:-2px}
-.opening-intro h1 em,.closing-names em{font-size:.62em;font-weight:400;color:#d4aea3;padding:0 .18em}
+.opening-intro #opening-title,.closing-names{font:400 clamp(60px,7.5vw,118px)/1.06 var(--serif);letter-spacing:-2px}
+.opening-intro #opening-title em,.closing-names em{font-size:.62em;font-weight:400;color:#d4aea3;padding:0 .18em}
 .opening-intro .eyebrow{margin:24px 0 0}
 .closing-message{font:400 clamp(24px,2.3vw,34px)/1.35 var(--serif);letter-spacing:0;margin-top:20px;color:#e0c3b8}
 .closing-message em{font-weight:400}
@@ -172,27 +172,27 @@ html:not(.motion-enabled) .closing-envelope .closing-summary{position:absolute;t
 html:not(.motion-enabled) .closing-envelope .closing-dateline{position:absolute;inset:auto 0 22%;padding:0}
 @media(max-width:700px){
  .opening-cover,.closing-envelope{--seal-size:62px;--seal-gap:24px}
- .opening-intro h1,.closing-names{font-size:clamp(36px,min(14vw,8svh),64px);line-height:1;letter-spacing:-1px}
- .opening-intro h1 span,.closing-names span{display:block}
- .opening-intro h1 em,.closing-names em{display:block;font-size:.47em;line-height:1.2;padding:5px 0}
+ .opening-intro #opening-title,.closing-names{font-size:clamp(36px,min(14vw,8svh),64px);line-height:1;letter-spacing:-1px}
+ .opening-intro #opening-title span,.closing-names span{display:block}
+ .opening-intro #opening-title em,.closing-names em{display:block;font-size:.47em;line-height:1.2;padding:5px 0}
  .opening-intro .eyebrow{margin-top:22px}
  .closing-message{font-size:25px;margin-top:20px}
  .opening-dateline,.closing-dateline{bottom:22%}
 }
 @media(max-height:680px) and (min-width:701px){
  .opening-cover,.closing-envelope{--seal-size:62px;--seal-gap:23px}
- .opening-intro h1,.closing-names{font-size:clamp(58px,6.6vw,94px)}
+ .opening-intro #opening-title,.closing-names{font-size:clamp(58px,6.6vw,94px)}
  .opening-intro .eyebrow{margin-top:18px}.closing-message{font-size:29px;margin-top:16px}
 }
 @media(max-height:650px) and (max-width:700px){
  .opening-cover,.closing-envelope{--seal-size:50px;--seal-gap:20px}
- .opening-intro h1,.closing-names{font-size:clamp(34px,min(13vw,7.5svh),48px)}
+ .opening-intro #opening-title,.closing-names{font-size:clamp(34px,min(13vw,7.5svh),48px)}
  .opening-intro .eyebrow{margin-top:15px}.closing-message{font-size:22px;margin-top:14px}
 }
 @media(max-height:500px) and (orientation:landscape){
  .opening-cover,.closing-envelope{--seal-size:42px;--seal-gap:14px}
- .opening-intro h1,.closing-names{font-size:clamp(28px,min(5.2vw,10svh),44px);line-height:1.04;letter-spacing:-.5px}
- .opening-intro h1 span,.opening-intro h1 em,.closing-names span,.closing-names em{display:inline;padding:0 .12em}
+ .opening-intro #opening-title,.closing-names{font-size:clamp(28px,min(5.2vw,10svh),44px);line-height:1.04;letter-spacing:-.5px}
+ .opening-intro #opening-title span,.opening-intro #opening-title em,.closing-names span,.closing-names em{display:inline;padding:0 .12em}
  .opening-intro .eyebrow{margin-top:10px}.closing-message{font-size:clamp(16px,4.7svh,21px);margin-top:8px;line-height:1.2}
  .opening-dateline,.closing-dateline{left:0;right:0;bottom:16%;text-align:center}
  html:not(.motion-enabled) .closing-envelope .closing-dateline{bottom:16%}

@@ -36,4 +36,8 @@ kết nối Internet.
 ## Wedding Memories
 
 Xem [WEDDING_MEMORIES.md](WEDDING_MEMORIES.md) cho cấu trúc camera, album lật trang,
-callback lời chúc và bộ đồ họa WebP dành riêng cho từng lễ.
+callback lời chúc và bộ đồ họa WebP.
+
+Giờ lễ/đón khách: `dist/wedding-config.js` (mặc định 09:00 / 11:00).
+Kết nối lời chúc: thay `APPS_SCRIPT_URL` trong `dist/index.html`; mã Google Apps
+Script tham khảo nằm tại `apps-script/loi-chuc.gs`. Endpoint chưa được cấu hình.

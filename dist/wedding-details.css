@@ -16,7 +16,7 @@
 /* A soft album photograph behind the countdown, with a readable dark veil. */
 .countdown-backdrop{position:absolute;inset:-48px;z-index:-2;pointer-events:none;filter:blur(40px) saturate(.65)}
 .countdown-backdrop img{object-position:50% 45%}
-.countdown-atmosphere{position:absolute;inset:0;z-index:-1;pointer-events:none;background:rgba(33,23,29,.65)}
+.countdown-atmosphere{position:absolute;inset:0;z-index:-1;pointer-events:none;background:#301a23;opacity:.65}
 /* A date on the left, a real October calendar on the right. */
 .calendar-stage,.motion-enabled .calendar-stage{height:100svh;min-height:0;padding:42px 7vw 38px}
 .calendar-layout{flex:1;min-height:0;display:grid;grid-template-columns:1.12fr 1fr;gap:7vw;align-items:center}
