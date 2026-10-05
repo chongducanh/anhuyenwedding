@@ -6,10 +6,8 @@ window.WEDDING_MEMORIES_DATA = {
     "initials": "A&U",
     "dateLabel": "25.10.2026",
     "tableAsset": "images/memories/table.webp",
-    "decorAsset": "images/memories/table.webp",
     "albumCover": "images/memories/album-au.webp",
     "boxAsset": "images/memories/money-box-au.webp",
-    "decorInTable": true,
     "frameAsset": "images/memories/frame.webp"
   },
   "photos": [

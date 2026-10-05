@@ -2,7 +2,8 @@
 
 The existing GSAP / ScrollTrigger invitation and album engine remain in place.
 The groom's site uses its original 5 frame images, 30 album images, AU artwork,
-date, and venue. This revision does not change the bride's site.
+date, and venue. The complete-table intro is shared with the bride-side site;
+each edition retains its own photos, identity and interaction flow.
 
 ## Scene and camera
 
@@ -107,3 +108,19 @@ request; no real Google Sheet was contacted. The clipped paper edge aligned
 with the slot within 1px after all four tested width changes. Reduced motion
 and no-JS paths each retained 35 images. There is exactly one H1 and no old
 09:30 / 10:30 time in published content or countdown code.
+
+## Complete-table introduction
+
+The table is fully dressed from the first frame. `mem-table-art` displays the
+complete `tableAsset` once, without complementary flower/cloth clips or a
+`decorAsset`. Its front lip aligns with the existing object footprints; no
+separate tabletop overlay is rendered. Foreground contact flowers and pearls
+are present from the outset;
+they never rise or reveal separately.
+
+The intro settles the whole world camera from 0.96 to 1 over 0.34 timeline units.
+Only afterward do the five frames, album and money box rise 8 world pixels with
+a small stagger. Each object's contact shadow reveals at the same time. The
+groom's physical wish card continues to follow the box's visibility. All later
+photo, album and wish phases, responsive timings and site-specific assets are
+preserved. Reversing the intro returns to a complete, already decorated table.
