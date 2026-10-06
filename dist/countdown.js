@@ -14,7 +14,7 @@
   const animate=visible&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches;
   elements.forEach((el,i)=>{const value=String(values[i]).padStart(2,'0');if(el.textContent===value)return;el.textContent=value;if(animate&&window.gsap)gsap.fromTo(el,{yPercent:-14,opacity:.45},{yPercent:0,opacity:1,duration:.42,ease:'power2.out',overwrite:true});});
   section.querySelector('em.countdown-title-line').textContent=left.total>0?'đang đến gần.':'đã đến.';
-  note.textContent=left.total>0?`Lễ thành hôn ${ceremony} · Đón khách ${reception}`:'Ngày chung đôi đã đến · 25.10.2026';
+  note.textContent=left.total>0?`Lễ tân hôn ${ceremony} · Đón khách ${reception}`:'Ngày chung đôi đã đến · 25.10.2026';
   timer?.kill();if(left.total>0&&!document.hidden&&window.gsap)timer=gsap.delayedCall(1,refresh);
  }
  new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;},{threshold:0}).observe(section);
